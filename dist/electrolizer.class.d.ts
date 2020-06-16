@@ -2,6 +2,7 @@ import { BrowserView, BrowserWindow, WebviewTag } from 'electron';
 import { OperatorFunctions } from './operator-functions.interface';
 import { WebviewTagDriver, BrowserViewDriver, BrowserWindowDriver } from './drivers';
 import { Push } from './evaluate-function.type';
+import { Cookies } from './drivers/cookies.interface';
 export declare enum ElectrolizerType {
     webview = "webview",
     browserView = "browserView",
@@ -13,6 +14,7 @@ export declare class Electrolizer<T extends WebviewTag | BrowserView | BrowserWi
     queue: (() => Promise<any>)[];
     driver: WebviewTagDriver | BrowserWindowDriver | BrowserViewDriver;
     constructor(bus: T);
+    cookies: Cookies<Electrolizer<T>>;
     private setupDriver;
     get busType(): ElectrolizerType;
     private _queue;
@@ -36,8 +38,11 @@ export declare class Electrolizer<T extends WebviewTag | BrowserView | BrowserWi
     exists(selector: string): Promise<boolean>;
     html(): Promise<string>;
     evaluate<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R>;
-    wait(arg: any): Electrolizer<T>;
+    wait(ms: number): Electrolizer<T>;
+    wait(selector: string, delay?: number): Electrolizer<T>;
+    wait<R, K extends any[]>(fn: (...args: Push<K, R>) => boolean | Promise<boolean>, ...args: K): Electrolizer<T>;
     header(header: string, value: string): Electrolizer<T>;
+    authentication(username: string, password: string): Electrolizer<T>;
     run(): Promise<void>;
 }
 export default Electrolizer;

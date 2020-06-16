@@ -1,3 +1,4 @@
+import { Cookies } from "./drivers/cookies.interface";
 export interface OperatorFunctions<T> {
     goto(url: string, headers?: Record<string, string>): T;
     back(): T;
@@ -18,9 +19,11 @@ export interface OperatorFunctions<T> {
     inject(type: 'js' | 'css', file: string): T;
     evaluate<K>(fn: () => K, ...args: any[]): Promise<K>;
     wait(ms: number): T;
-    wait(selector: string): T;
+    wait(selector: string, ms?: number): T;
     wait(fn: () => boolean, ...args: any[]): T;
     header(header: string, value: string): T;
     html(): Promise<string>;
     exists(selector: string): Promise<boolean>;
+    authentication(username: string, password: string): T;
+    cookies: Cookies<T>;
 }

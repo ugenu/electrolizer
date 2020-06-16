@@ -2,8 +2,10 @@ import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
 import { OperatorFunctions } from '../operator-functions.interface';
 import { Push } from '../evaluate-function.type';
 import { ElectrolizerType } from '../electrolizer.class';
+import { Cookies } from './cookies.class';
 export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<void> {
     protected bus: T;
+    cookies: Cookies;
     constructor(bus: T);
     get busType(): ElectrolizerType;
     get webContents(): WebContents;
@@ -32,7 +34,9 @@ export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> 
     inject(type: 'js' | 'css', file: string): Promise<void>;
     evaluate<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R>;
     wait(ms: number): Promise<void>;
-    wait(selector: string): Promise<void>;
-    wait(fn: () => boolean, ...args: any[]): Promise<void>;
+    wait(selector: string, msDelay?: number): Promise<void>;
+    wait<T, K extends any[]>(fn: (...args: Push<K, T>) => boolean | Promise<boolean>, ...args: K): Promise<void>;
     header(header: string, value: string): Promise<void>;
+    private loginEventListener;
+    authentication(username: string, password: string): Promise<void>;
 }
