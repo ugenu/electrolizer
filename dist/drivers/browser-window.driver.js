@@ -1,0 +1,13 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _driver = require("./driver.class");
+
+class BrowserWindowDriver extends _driver.Driver {}
+
+exports.default = BrowserWindowDriver;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9kcml2ZXJzL2Jyb3dzZXItd2luZG93LmRyaXZlci50cyJdLCJuYW1lcyI6WyJCcm93c2VyV2luZG93RHJpdmVyIiwiRHJpdmVyIl0sIm1hcHBpbmdzIjoiOzs7Ozs7O0FBQUE7O0FBR2UsTUFBTUEsbUJBQU4sU0FBa0NDLGNBQWxDLENBQXdEIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgRHJpdmVyIH0gZnJvbSBcIi4vZHJpdmVyLmNsYXNzXCI7XG5pbXBvcnQgeyBCcm93c2VyV2luZG93IH0gZnJvbSBcImVsZWN0cm9uXCI7XG5cbmV4cG9ydCBkZWZhdWx0IGNsYXNzIEJyb3dzZXJXaW5kb3dEcml2ZXIgZXh0ZW5kcyBEcml2ZXI8QnJvd3NlcldpbmRvdz4ge30iXX0=

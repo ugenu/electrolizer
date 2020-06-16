@@ -1,0 +1,13 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _driver = require("./driver.class");
+
+class WebviewTagDriver extends _driver.Driver {}
+
+exports.default = WebviewTagDriver;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9kcml2ZXJzL3dlYnZpZXctdGFnLmRyaXZlci50cyJdLCJuYW1lcyI6WyJXZWJ2aWV3VGFnRHJpdmVyIiwiRHJpdmVyIl0sIm1hcHBpbmdzIjoiOzs7Ozs7O0FBQUE7O0FBR2UsTUFBTUEsZ0JBQU4sU0FBK0JDLGNBQS9CLENBQWtEIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgRHJpdmVyIH0gZnJvbSBcIi4vZHJpdmVyLmNsYXNzXCI7XG5pbXBvcnQgeyBXZWJ2aWV3VGFnIH0gZnJvbSBcImVsZWN0cm9uXCI7XG5cbmV4cG9ydCBkZWZhdWx0IGNsYXNzIFdlYnZpZXdUYWdEcml2ZXIgZXh0ZW5kcyBEcml2ZXI8V2Vidmlld1RhZz4ge30iXX0=

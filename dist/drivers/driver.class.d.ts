@@ -1,0 +1,38 @@
+import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
+import { OperatorFunctions } from '../operator-functions.interface';
+import { Push } from '../evaluate-function.type';
+import { ElectrolizerType } from '../electrolizer.class';
+export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<void> {
+    protected bus: T;
+    constructor(bus: T);
+    get busType(): ElectrolizerType;
+    get webContents(): WebContents;
+    private _inject;
+    evaluate_now<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R>;
+    goto(url: string, headers?: Record<string, string>): Promise<void>;
+    back(): Promise<void>;
+    forward(): Promise<void>;
+    refresh(): Promise<void>;
+    click(selector: string): Promise<void>;
+    mousedown(selector: string): Promise<void>;
+    exists(selctor: string): Promise<boolean>;
+    mouseup(selector: string): Promise<void>;
+    mouseover(selector: string): Promise<void>;
+    mouseout(selector: string): Promise<void>;
+    focus(selector: string): Promise<void>;
+    blur(selector: string): Promise<void>;
+    type(selector: string, text?: string): Promise<void>;
+    insert(selector: string, text?: string): Promise<void>;
+    check(selector: string): Promise<void>;
+    uncheck(selector: string): Promise<void>;
+    select(selector: string, option?: string): Promise<void>;
+    scrollTo(top: number, left: number): Promise<void>;
+    html(): Promise<string>;
+    viewport(width: number, height: number): Promise<void>;
+    inject(type: 'js' | 'css', file: string): Promise<void>;
+    evaluate<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R>;
+    wait(ms: number): Promise<void>;
+    wait(selector: string): Promise<void>;
+    wait(fn: () => boolean, ...args: any[]): Promise<void>;
+    header(header: string, value: string): Promise<void>;
+}

@@ -1,0 +1,11 @@
+{
+  "presets": [
+    ["@babel/env", { "targets": {"esmodules": true}}],
+    "@babel/typescript"
+  ],
+  "plugins": [
+    "@babel/proposal-class-properties",
+    ["@babel/plugin-transform-typescript", {"allowNamespaces": true}],
+    ["@babel/plugin-transform-runtime", { "regenerator": true }]
+  ]
+}
