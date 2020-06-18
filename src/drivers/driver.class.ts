@@ -57,7 +57,7 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
   }
 
   
-  async evaluate_now<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R> {
+  private async evaluate_now<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R> {
     let _args = Array.prototype.slice.call(arguments).slice(1).map(argument => {
       return { argument: JSON.stringify(argument) }
     });
@@ -344,6 +344,10 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
   
   async header(header: string, value: string): Promise<void> {
 
+  }
+
+  async useragent(useragent: string): Promise<void> {
+    this.webContents.setUserAgent(useragent);
   }
   
   private loginEventListener : (event: Electron.Event, request: Electron.Request, authInfo: Electron.AuthInfo, callback: (username: string, password: string) => void) => void = () => {}

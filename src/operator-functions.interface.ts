@@ -26,6 +26,7 @@ export interface OperatorFunctions<T> {
   html(): Promise<string>;
   exists(selector: string): Promise<boolean>;
   authentication(username: string, password: string): T;
+  useragent(useragent: string): T;
   
   cookies: Cookies<T>
 }

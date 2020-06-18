@@ -10,7 +10,7 @@ export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> 
     get busType(): ElectrolizerType;
     get webContents(): WebContents;
     private _inject;
-    evaluate_now<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R>;
+    private evaluate_now;
     goto(url: string, headers?: Record<string, string>): Promise<void>;
     back(): Promise<void>;
     forward(): Promise<void>;
@@ -37,6 +37,7 @@ export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> 
     wait(selector: string, msDelay?: number): Promise<void>;
     wait<T, K extends any[]>(fn: (...args: Push<K, T>) => boolean | Promise<boolean>, ...args: K): Promise<void>;
     header(header: string, value: string): Promise<void>;
+    useragent(useragent: string): Promise<void>;
     private loginEventListener;
     authentication(username: string, password: string): Promise<void>;
 }

@@ -43,6 +43,8 @@ export declare class Electrolizer<T extends WebviewTag | BrowserView | BrowserWi
     wait<R, K extends any[]>(fn: (...args: Push<K, R>) => boolean | Promise<boolean>, ...args: K): Electrolizer<T>;
     header(header: string, value: string): Electrolizer<T>;
     authentication(username: string, password: string): Electrolizer<T>;
+    useragent(useragent: string): Electrolizer<T>;
     run(): Promise<void>;
+    end(): Promise<void>;
 }
 export default Electrolizer;

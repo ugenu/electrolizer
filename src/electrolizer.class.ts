@@ -180,7 +180,7 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
 
   async evaluate<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R> {
     await this.run();
-    return this.driver.evaluate_now(fn, ...args);
+    return this.driver.evaluate(fn, ...args);
   }
 
   wait(ms: number): Electrolizer<T>
@@ -201,16 +201,21 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
     return this;
   }
 
+  useragent(useragent: string): Electrolizer<T> {
+    this._queue(this.driver.useragent.bind(this.driver, useragent));
+    return this;
+  }
+
   async run(): Promise<void> {
     for(let block of this.queue){
-      try {
-        await block();
-      } catch(error) {
-        console.log("ERROR", error, block);
-      }
+      await block();
     }
 
     this.queue = [];
+  }
+
+  async end(): Promise<void> {
+    this.run();
   }
 }
 
