@@ -304,7 +304,39 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
   async evaluate<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R> {
     return this.evaluate_now(fn, ...args);
   }
- 
+  
+  private retry(fn: () => Promise<Boolean>, timeout: number, softTimeout?: number): () => Promise<void> {
+    let error: Error | undefined = undefined;
+    let running: boolean = true;
+
+    let runner = async () => {
+
+      setTimeout(() => { 
+        running = false; 
+        error = new Error('timed out');
+      }, softTimeout ? softTimeout : timeout);
+
+      while(running){
+        try {
+          let result = await fn();
+          
+          if(result){ running = false; }
+  
+        } catch (_error){
+          running = false;
+          error = _error;
+        }
+      }
+  
+      if(error){
+        if(!softTimeout){
+          throw error;
+        }
+      }
+    };
+
+    return runner;
+  }
 
   async wait(ms: number): Promise<void>
   async wait(selector: string, msDelay?: number): Promise<void> 
@@ -312,27 +344,18 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
   async wait(): Promise<void> {
     let block: () => Promise<void>;
 
-    let errorTimeout = async (): Promise<void> => {
-      await delay(30000);
-      throw new Error('timed out');
-    };
+    let errorTimeout = 30000;
 
     switch(typeof arguments[0]){
       case "number":
         block = delay.bind(null, arguments[0]);
         break;
       case "string":
-        block = async () => Promise.race([
-          retry(Infinity, this.exists.bind(this, arguments[0])),
-          typeof arguments[1] === "number" ? delay(arguments[1]) : errorTimeout(),
-        ]);
+        block = this.retry(() => this.exists(arguments[0]), errorTimeout, arguments[1]);
         break;
       case "function":
-        block = async () => Promise.race([
-          //@ts-ignore
-          retry(Infinity, this.evaluate.apply(this, arguments)),
-          errorTimeout(),
-        ]);
+        //@ts-ignore
+        block = this.retry(() => this.evaluate.apply(this, arguments), errorTimeout);
       default:
         block = async () => {};
         break;
