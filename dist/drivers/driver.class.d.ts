@@ -33,6 +33,7 @@ export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> 
     viewport(width: number, height: number): Promise<void>;
     inject(type: 'js' | 'css', file: string): Promise<void>;
     evaluate<T, K extends any[], R>(fn: (...args: Push<K, T>) => R, ...args: K): Promise<R>;
+    private retry;
     wait(ms: number): Promise<void>;
     wait(selector: string, msDelay?: number): Promise<void>;
     wait<T, K extends any[]>(fn: (...args: Push<K, T>) => boolean | Promise<boolean>, ...args: K): Promise<void>;
