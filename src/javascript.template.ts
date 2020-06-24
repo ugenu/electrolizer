@@ -18,15 +18,16 @@ const templateExecute  = `
   }); 
 `;
 
+/**
+ * TODO: [EL-2] fix inject and make tests
+ */
 const templateInject = `
 new Promise(async (resolve, reject) => {
-  let fn = ( () => {
-    {{{fn}}}
-  })();
+  let fn = (function () { {{{fn}}} \n});
 
   let response = undefined;
   try {
-    response = await fn.apply(null);
+    response = await fn();
   } catch (error) {
     return reject(error);
   }
