@@ -1,6 +1,5 @@
 import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
 import { OperatorFunctions } from './operator-functions.interface';
-import { series } from 'async';
 import { WebviewTagDriver, BrowserViewDriver, BrowserWindowDriver } from './drivers';
 import { Push } from './evaluate-function.type';
 import { Cookies } from './drivers/cookies.interface';
@@ -29,7 +28,7 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
       this._queue( () => this.driver.cookies.clearAll() );
       return this;
     },
-    get: (arg: any) => {
+    get: (arg?: any) => {
       return this.driver.cookies.get(arg)
     },
     set: (name: string | Electron.Cookie, value?: string) => {

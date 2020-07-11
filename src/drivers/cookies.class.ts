@@ -4,14 +4,23 @@ import { Cookies as ICookies } from './cookies.interface';
 export class Cookies implements ICookies<Promise<void>> {
   constructor(protected webContents: WebContents){}
 
-  async get(name: string | Electron.Filter): Promise<Electron.Cookie[]> {
+  async get(): Promise<Electron.Cookie[]>
+  async get(name: string): Promise<Electron.Cookie[]>;
+  async get(filter: Electron.Filter): Promise<Electron.Cookie[]>;
+  async get(): Promise<Electron.Cookie[]> {
+    let arg = arguments[0];
+
     let filter: Electron.Filter = {};
 
-    if(typeof name === "string"){
-      filter.name = name;
+    if(typeof arg === "string"){
+      filter.name = arg;
     }
-
+    
     filter.url = this.webContents.getURL();
+
+    if(typeof arg === "object") {
+      filter = arg;
+    }
 
     return await this.webContents.session.cookies.get(filter);
   }
