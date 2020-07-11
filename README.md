@@ -53,7 +53,7 @@ Electrolizer sample with `.run()`:
 ```
 
 ## Usage
-First, you must instantiate your browser `bus`, be it a BrowserWindow, BrowserView, or &lt;webview&gt; tag.
+First, you must instantiate your browser `bus`, be it a BrowserWindow, BrowserView, or <webview> tag.
 
 ```ts
   let bus = new BrowserWindow({...options});
@@ -64,11 +64,14 @@ And now you're ready to automate! Refer to [Nightmare docs](https://github.com/s
 
 ## Events
 You handle 'em! Since you have control over the `bus`, you can hook onto any event that you desire.
+
 | Bus Type                  | Events Documentation                                                                       |
 |---------------------------|--------------------------------------------------------------------------------------------|
 | BrowserWindow.webContents | [webContents Events](https://www.electronjs.org/docs/api/web-contents#instance-events)     |
 | BrowserView.webContents   | [webContents Events](  https://www.electronjs.org/docs/api/web-contents#instance-events  ) |
-| &lt;webview&gt;           | [DOM-Events](https://www.electronjs.org/docs/api/webview-tag#dom-events)                   |
+| <webview>            | [DOM-Events](https://www.electronjs.org/docs/api/webview-tag#dom-events)                   |
+
+
 
 ## Tests
 Electrolizer was tested with a BrowserWindow, and utilizing the same suite of tests that Nightmare does. 
