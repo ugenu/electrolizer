@@ -4,7 +4,6 @@ import { Push } from '../evaluate-function.type';
 import { execute, inject } from '../javascript.template';
 import { ElectrolizerType } from '../electrolizer.class';
 import { delay } from '../utils/delay.function';
-import { until, retry } from 'async';
 import { promises } from 'fs';
 import { Cookies } from './cookies.class';
 

@@ -1,6 +1,5 @@
 import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
 import { OperatorFunctions } from './operator-functions.interface';
-import { series } from 'async';
 import { WebviewTagDriver, BrowserViewDriver, BrowserWindowDriver } from './drivers';
 import { Push } from './evaluate-function.type';
 import { Cookies } from './drivers/cookies.interface';
