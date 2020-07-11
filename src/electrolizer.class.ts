@@ -28,7 +28,7 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
       this._queue( () => this.driver.cookies.clearAll() );
       return this;
     },
-    get: (arg: any) => {
+    get: (arg?: any) => {
       return this.driver.cookies.get(arg)
     },
     set: (name: string | Electron.Cookie, value?: string) => {

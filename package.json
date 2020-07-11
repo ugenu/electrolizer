@@ -1,6 +1,6 @@
 {
   "name": "@ugenu.io/electrolizer",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Automate your electron browserView or browserWindow",
   "main": "dist/index.js",
   "scripts": {
@@ -17,7 +17,7 @@
       "pre-commit": "npm run build && git add ."
     }
   },
-  "author": "",
+  "author": "@ugenu.io",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.8.3",
