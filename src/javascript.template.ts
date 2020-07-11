@@ -18,21 +18,15 @@ const templateExecute  = `
   }); 
 `;
 
+/**
+ * TODO: [EL-2] fix inject and make tests
+ */
 const templateInject = `
-new Promise(async (resolve, reject) => {
-  let fn = ( () => {
-    {{{fn}}}
-  })();
-
-  let response = undefined;
-  try {
-    response = await fn.apply(null);
-  } catch (error) {
-    return reject(error);
-  }
-  
-  return resolve(response);
-});
+(function javascript () {
+  if (typeof module === 'object') {window.module = module; module = undefined;}
+  var response = (function () { {{{fn}}} \n})()
+  if (window.module) module = window.module;
+})();
 `;
 
 export const execute = compile(templateExecute);

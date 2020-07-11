@@ -171,120 +171,176 @@ describe("Electrolizer", () => {
 
 
     describe('asynchronous wait', () => {
-
+      it('should wait until the evaluate fn with arguments returns true with a promise', async () => {
+        await elec.goto(fixture('navigation')).wait(
+          function(expectedA, expectedB) {
+            return new Promise<boolean>(function(resolve) {
+              setTimeout(() => {
+                //@ts-ignore
+                var textA = document.querySelector('a.a').textContent
+                //@ts-ignore
+                var textB = document.querySelector('a.b').textContent
+                resolve(expectedA === textA && expectedB === textB)
+              }, 2000)
+            })
+          },
+          'A',
+          'B'
+        ).run();
+      });
+  
+      it('should reject timeout on wait', async () => {
+        await assert.rejects(elec.goto(fixture('navigation')).wait(async () => { 
+          return await new Promise<boolean>((resolve) => {
+            //never resolve
+          });
+        }).run)
+      });
+  
+      it('should reject timeout on wait with selector', async () => {
+        await assert.rejects(elec.goto(fixture('navigation')).wait('#non-existent').run);
+      });
+  
+      it('should run multiple times before timeout on wait', async () => {
+        await assert.rejects(elec.goto(fixture('navigation')).wait(function() { return false; }).run)
+      });
+  
+      it('should fail if navigation target is invalid', async () => {
+        await assert.rejects(elec.goto('http://this-is-not-a-real-domain.tld').run)
+  
+        try {
+          let response = await elec.goto('http://this-is-not-a-real-domain.tld').run();
+        } catch (error){
+          assert.equal(error.code, 'ERR_NAME_NOT_RESOLVED')
+          assert.equal(error.errno, -105)
+          assert.equal(error.url, 'http://this-is-not-a-real-domain.tld/')
+          return
+        }
+  
+        throw new Error('Error should have occured');
+      });
+  
+      it('should fail if navigation target is a malformed URL', async () => {
+        await assert.rejects(elec.goto('somewhere out there').run)
+      });
+  
+      it('should fail if navigating to an unknown protocol', async () => {
+        await assert.rejects(elec.goto('fake-protocol://blahblahblah').run)
+      });
+  
+      it('should not fail if the URL loads but a resource fails', async () => {
+        await elec.goto(fixture('navigation/invalid-image')).run();
+      });
+  
+      it('should not fail if a child frame fails', async () => {
+        await elec.goto(fixture('navigation/invalid-frame')).run();
+      });
+  
+      it('should return correct data when child frames are present', async () => {
+        await elec.goto(fixture('navigation/valid-frame')).run();
+        //@ts-ignore
+        let url = await elec.evaluate(() => { return window.location.href });
+  
+        assert.equal(url, fixture('navigation/valid-frame'));
+      });
+  
+      it('should not fail if response was a valid error (e.g. 404)', async () => {
+        await elec.goto(fixture('navigation/not-a-real-page')).run();
+      });
+  
+      it('should fail if the response dies in flight', async () => {
+        await assert.rejects(elec.goto(fixture('do-not-respond')).run);
+      });
+  
+      it('should not fail for a redirect', async () => {
+        await elec.goto(fixture('redirect?url=%2Fnavigation')).run();
+      });
+  
+      it('should fail for a redirect to an invalid URL', async () => {
+        await assert.rejects(elec.goto(fixture('redirect?url=http%3A%2F%2Fthis-is-not-a-real-domain.tld')).run);
+      });
+  
+      it.todo('should succeed properly if request handler is present');
+  
+      it.todo('should fail properly if request handler is present');
+  
+      it.skip('should support javascript URLs', async () => {
+        await elec
+          .goto(fixture('navigation'))
+          .goto('javascript:void(document.querySelector(".a").textContent="LINK");')
+          .run();
+  
+        //@ts-ignore
+        let linkText = await elec.evaluate(() => document.querySelector('.a').textContent);
+  
+        assert.equal(linkText, 'LINK');
+      });
+  
+      it.skip('should support javascript URLs that load pages', async () => {
+  
+      });
+  
+      it('should fail immediately/not time out for 304 statuses', async () => {
+  
+      });
     });
 
-    it('should wait until the evaluate fn with arguments returns true with a promise', async () => {
-      await elec.goto(fixture('navigation')).wait(
-        function(expectedA, expectedB) {
-          return new Promise<boolean>(function(resolve) {
-            setTimeout(() => {
-              //@ts-ignore
-              var textA = document.querySelector('a.a').textContent
-              //@ts-ignore
-              var textB = document.querySelector('a.b').textContent
-              resolve(expectedA === textA && expectedB === textB)
-            }, 2000)
+    describe('manipulation', () => {
+      it('should inject javascript onto the page', async () => {
+        let globalNumber: number = await elec.goto(fixture('manipulation'))
+          .inject('js', 'tests/helpers/files/globals.js')
+          .evaluate(function() {
+            return globalNumber
           })
-        },
-        'A',
-        'B'
-      ).run();
-    });
+        assert.equal(globalNumber, 7);
 
-    it('should reject timeout on wait', async () => {
-      await assert.rejects(elec.goto(fixture('navigation')).wait(async () => { 
-        return await new Promise<boolean>((resolve) => {
-          //never resolve
-        });
-      }).run)
-    });
+        let numberAnchors: number = await elec
+          .goto(fixture('manipulation'))
+          .inject('js', 'tests/helpers/files/jquery-2.1.1.min.js')
+          .evaluate(function() {
+            //@ts-ignore
+            return window.$('h1').length
+          });
+        
+        assert.equal(numberAnchors, 1);
+      });
 
-    it('should reject timeout on wait with selector', async () => {
-      await assert.rejects(elec.goto(fixture('navigation')).wait('#non-existent').run);
-    });
+      it('should inject javascript onto the page ending with a comment', async () => {
+        let numberAnchors: number = await elec
+          .goto(fixture('manipulation'))
+          .inject('js', 'tests/helpers/files/jquery-1.9.0.min.js')
+          .evaluate(function() {
+            //@ts-ignore
+            return window.$('h1').length
+          });
+        
+        assert.equal(numberAnchors, 1);
+      });
 
-    it('should run multiple times before timeout on wait', async () => {
-      await assert.rejects(elec.goto(fixture('navigation')).wait(function() { return false; }).run)
-    });
+      it('should inject css onto the page', async () => {
+        let color: string = await elec.goto(fixture('manipulation'))
+          .inject('js', 'tests/helpers/files/jquery-2.1.1.min.js')
+          .inject('css', 'tests/helpers/files/test.css')
+          .evaluate(function() {
+            //@ts-ignore
+            return window.$('body').css('background-color')
+          });
 
-    it('should fail if navigation target is invalid', async () => {
-      await assert.rejects(elec.goto('http://this-is-not-a-real-domain.tld').run)
+        assert.equal(color, 'rgb(255, 0, 0)');
+      });
 
-      try {
-        let response = await elec.goto('http://this-is-not-a-real-domain.tld').run();
-      } catch (error){
-        assert.equal(error.code, 'ERR_NAME_NOT_RESOLVED')
-        assert.equal(error.errno, -105)
-        assert.equal(error.url, 'http://this-is-not-a-real-domain.tld/')
-        return
-      }
+      it('should not inject unsupported types onto the page', async () => {
+        let color: string = await elec.goto(fixture('manipulation'))
+          .inject('js', 'tests/helpers/files/jquery-2.1.1.min.js')
+          //@ts-ignore
+          .inject('pdf', 'tests/helpers/files/test.css')
+          .evaluate(function() {
+            //@ts-ignore
+            return window.$('body').css('background-color')
+          });
 
-      throw new Error('Error should have occured');
-    });
-
-    it('should fail if navigation target is a malformed URL', async () => {
-      await assert.rejects(elec.goto('somewhere out there').run)
-    });
-
-    it('should fail if navigating to an unknown protocol', async () => {
-      await assert.rejects(elec.goto('fake-protocol://blahblahblah').run)
-    });
-
-    it('should not fail if the URL loads but a resource fails', async () => {
-      await elec.goto(fixture('navigation/invalid-image')).run();
-    });
-
-    it('should not fail if a child frame fails', async () => {
-      await elec.goto(fixture('navigation/invalid-frame')).run();
-    });
-
-    it('should return correct data when child frames are present', async () => {
-      await elec.goto(fixture('navigation/valid-frame')).run();
-      //@ts-ignore
-      let url = await elec.evaluate(() => { return window.location.href });
-
-      assert.equal(url, fixture('navigation/valid-frame'));
-    });
-
-    it('should not fail if response was a valid error (e.g. 404)', async () => {
-      await elec.goto(fixture('navigation/not-a-real-page')).run();
-    });
-
-    it('should fail if the response dies in flight', async () => {
-      await assert.rejects(elec.goto(fixture('do-not-respond')).run);
-    });
-
-    it('should not fail for a redirect', async () => {
-      await elec.goto(fixture('redirect?url=%2Fnavigation')).run();
-    });
-
-    it('should fail for a redirect to an invalid URL', async () => {
-      await assert.rejects(elec.goto(fixture('redirect?url=http%3A%2F%2Fthis-is-not-a-real-domain.tld')).run);
-    });
-
-    it.todo('should succeed properly if request handler is present');
-
-    it.todo('should fail properly if request handler is present');
-
-    it.skip('should support javascript URLs', async () => {
-      await elec
-        .goto(fixture('navigation'))
-        .goto('javascript:void(document.querySelector(".a").textContent="LINK");')
-        .run();
-
-      //@ts-ignore
-      let linkText = await elec.evaluate(() => document.querySelector('.a').textContent);
-
-      assert.equal(linkText, 'LINK');
-    });
-
-    it.skip('should support javascript URLs that load pages', async () => {
-
-    });
-
-    it('should fail immediately/not time out for 304 statuses', async () => {
-
+        assert.notEqual(color, 'rgb(255, 0, 0)');
+      });
     });
   });
 });
