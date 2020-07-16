@@ -5,6 +5,7 @@ Automate browser interactions just like [Nightmare](https://github.com/segmentio
 
 ![Electrolizer demo](assets/electrolizer-demo.gif)
 
+* [Installation](#installation)
 * [Why](#why)
 * [What makes Electrolizer different?](#what-makes)
   * [Example](#example-1)
@@ -15,6 +16,9 @@ Automate browser interactions just like [Nightmare](https://github.com/segmentio
 * [Roadmap](#roadmap)
 * [Special Thanks](#special-thanks)
 * [License](#license)
+
+## Installation
+``` npm install @ugenu.io/electrolizer [--save] ```
 
 ## Why?
 Having faced the difficulty of trying to integrate a Nightmare instance inside a running Electron application, it was time something had to be done. 
