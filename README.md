@@ -1,7 +1,7 @@
 ![Electrolizer icon](assets/documentation-logo.png)
-# @ugenu.io/electrolizer - Automate a BrowserWindow, BrowserView, or <webview> tag
+# @ugenu.io/electrolizer - Automate a BrowserWindow, BrowserView, or webview tag
 
-Automate browser interactions just like [Nightmare](https://github.com/segmentio/nightmare), but with an existing BrowserWindow, BrowserView, or <webview> tag. Written in TypeScript for your convenience!
+Automate browser interactions just like [Nightmare](https://github.com/segmentio/nightmare), but with an existing BrowserWindow, BrowserView, or webview tag. Written in TypeScript for your convenience!
 
 ![Electrolizer demo](assets/electrolizer-demo.gif)
 
@@ -69,7 +69,7 @@ Electrolizer sample with `.run()`:
 ```
 
 ## Usage
-First, you must instantiate your browser `bus`, be it a BrowserWindow, BrowserView, or <webview> tag.
+First, you must instantiate your browser `bus`, be it a BrowserWindow, BrowserView, or webview tag.
 
 ```ts
   let bus = new BrowserWindow({...options});
@@ -345,7 +345,7 @@ You handle 'em! Since you have control over the `bus`, you can hook onto any eve
 |---------------------------|--------------------------------------------------------------------------------------------|
 | BrowserWindow.webContents | [webContents Events](https://www.electronjs.org/docs/api/web-contents#instance-events)     |
 | BrowserView.webContents   | [webContents Events](  https://www.electronjs.org/docs/api/web-contents#instance-events  ) |
-| <webview>           | [DOM-Events](https://www.electronjs.org/docs/api/webview-tag#dom-events)                   |
+| webview           | [DOM-Events](https://www.electronjs.org/docs/api/webview-tag#dom-events)                   |
 
 ## Tests
 Electrolizer was tested with a BrowserWindow, and utilizing the same suite of tests that Nightmare does. 

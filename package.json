@@ -1,7 +1,7 @@
 {
   "name": "@ugenu.io/electrolizer",
   "version": "1.0.0",
-  "description": "Automate your electron browserView or browserWindow",
+  "description": "Automate your electron browserView, browserWindow, or <webview> tag",
   "main": "dist/index.js",
   "scripts": {
     "test": "nodemon -e ts --exec \"npm run test:main\"",
