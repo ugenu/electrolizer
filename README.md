@@ -211,17 +211,29 @@ Returns whether the selector is visible or not.
 
 ***Important***: Calling this function will run the queue and then return the Promise that will resolve the result. Do NOT call `.run()` after calling `.visible()`
 
-#### .screenshot([path][, clip])
+#### .screenshot(clip?: Electron.Rectangle, options?: Electron.toPNGOptions): Promise<Buffer>
 
-Takes a screenshot of the current page. Useful for debugging. The output is always a `png`. Both arguments are optional. If `path` is provided, it saves the image to the disk. Otherwise it returns a `Buffer` of the image data. If `clip` is provided (as [documented here](https://github.com/atom/electron/blob/master/docs/api/browser-window.md#wincapturepagerect-callback)), the image will be clipped to the rectangle.
+Takes a screenshot of the current page. Useful for debugging. Always returns the buffer of the PNG.
 
-#### .html(path, saveType)
+[Electron.Rectangle](https://www.electronjs.org/docs/api/structures/rectangle)
+[Electron.toPNGOptions](https://www.electronjs.org/docs/api/native-image#imagetopngoptions)
 
-Saves the current page as html as files to disk at the given path. Save type options are [here](https://github.com/atom/electron/blob/master/docs/api/web-contents.md#webcontentssavepagefullpath-savetype-callback).
+***Important***: Calling this function will run the queue and then return the Promise that will resolve the result. Do NOT call `.run()` after calling `.screenshot()`
 
-#### .pdf(path, options)
 
-Saves a PDF to the specified `path`. Options are [here](https://github.com/electron/electron/blob/v1.4.4/docs/api/web-contents.md#contentsprinttopdfoptions-callback).
+#### .html(): Promise<string>
+
+Returns the current html of the webpage.
+
+***Important***: Calling this function will run the queue and then return the Promise that will resolve the result. Do NOT call `.run()` after calling `.html()`
+
+#### .pdf(options?: Electron.PrintToPDFOptions): Promise<Buffer>
+
+Generates a pdf of the current page and returns that as a buffer.
+
+[Electron.PrintToPDFOptions](https://www.electronjs.org/docs/api/web-contents#contentsprinttopdfoptions)
+
+***Important***: Calling this function will run the queue and then return the Promise that will resolve the result. Do NOT call `.run()` after calling `.pdf()`
 
 #### .title(): Promise<string>
 
@@ -243,13 +255,17 @@ Returns the path name of the current page.
 
 ### Cookies
 
+[Electron.Cookie](https://www.electronjs.org/docs/api/structures/cookie)
+
 #### .cookies.get(name): Promise<Electron.Cookie[]>
 
 Gets a cookie by it's `name`. The url will be the current url.
 
-#### .cookies.get(query): Promise<Electron.Cookie[]>
+#### .cookies.get(query: Electron.Filter): Promise<Electron.Cookie[]>
 
 Queries multiple cookies with the `query` object. If a `query.name` is set, it will return the first cookie it finds with that name, otherwise it will query for an array of cookies. If no `query.url` is set, it will use the current url. Here's an example:
+
+[Electron.Filter](https://www.electronjs.org/docs/api/cookies#cookiesgetfilter)
 
 ```js
 // get all google cookies that are secure
