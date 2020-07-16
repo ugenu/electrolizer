@@ -1,6 +1,9 @@
+![Electrolizer icon](assets/documentation-logo.png)
 # @ugenu.io/electrolizer - Automate a BrowserWindow, BrowserView, or <webview> tag
 
 Automate browser interactions just like [Nightmare](https://github.com/segmentio/nightmare), but with an existing BrowserWindow, BrowserView, or <webview> tag. Written in TypeScript for your convenience!
+
+![Electrolizer demo](assets/electrolizer-demo.gif)
 
 * [Why](#why)
 * [What makes Electrolizer different?](#what-makes)
@@ -9,6 +12,7 @@ Automate browser interactions just like [Nightmare](https://github.com/segmentio
 * [Detailed Docs](#detailed-docs)
 * [Events](#events)
 * [Security](#security)
+* [Roadmap](#roadmap)
 * [Special Thanks](#special-thanks)
 * [License](#license)
 
@@ -72,7 +76,7 @@ First, you must instantiate your browser `bus`, be it a BrowserWindow, BrowserVi
   let electrolizer = new Electrolizer(bus);
 ```
 
-And now you're ready to automate! Refer to [Nightmare docs](https://github.com/segmentio/nightmare) for general use, keeping in mind we use `.run()` to perform the queue. 
+And now you're ready to automate! Keep in mind we use `.run()` to perform the queue. 
 
 ## Detailed Docs
 We humbly thank [Nightmare](https://github.com/segmentio/nightmare) for providing the documentation listed here.
@@ -349,6 +353,12 @@ Electrolizer was tested with a BrowserWindow, and utilizing the same suite of te
 
 ## Security
 The architecture of Electrolizer does not require any preload scripts or anything that jeopardizes the general security that [Electron uses by default](https://github.com/electron/electron/blob/master/docs/tutorial/security.md). Still, it is wise to follow best practices and your best judgement. Electron is a powerful tool in the hands of hackers, but not if we all work together!
+
+## Roadmap
+* Naturalize setting / configuration to thwart bot detection
+* Type timeout speed
+* Complete tests
+* Maybe a better name?
 
 ## Special Thanks
 - [Nightmare](https://github.com/segmentio/nightmare) - an invaluable source of inspiration and quality code
