@@ -1,10 +1,11 @@
+/// <reference types="node" />
 import { Cookies } from "./drivers/cookies.interface";
 import { Push } from "./evaluate-function.type";
 export interface OperatorFunctions<T> {
     /**
      * Direct the ElectrolizerBus to a new URL
      * @param url
-     * @param headers NOT CURRENTLY SUPPORTED
+     * @param headers
      */
     goto(url: string, headers?: Record<string, string>): T;
     /**
@@ -44,6 +45,16 @@ export interface OperatorFunctions<T> {
      * @param selector
      */
     mouseout(selector: string): T;
+    /**
+     * Focus on an element at the selector
+     * @param selector
+     */
+    focus(selector: string): T;
+    /**
+     * Blur an element at the selector
+     * @param selector
+     */
+    blur(selector: string): T;
     /**
      * Type the text into the selector input like a human would
      * @param selector
@@ -118,11 +129,34 @@ export interface OperatorFunctions<T> {
      * @param header
      * @param value
      */
-    header(header: string, value: string): T;
+    header(header?: string, value?: string): T;
     /**
      * Return the current html contents of the webpage
      */
     html(): Promise<string>;
+    /**
+     * return the current url of the webpage
+     */
+    url(): Promise<string>;
+    /**
+     * return the path of the current page
+     */
+    path(): Promise<string>;
+    /**
+     * Return the title of the current page
+     */
+    title(): Promise<string>;
+    /**
+     * Generate a pdf of the current webpage, returns the buffer of the pdf
+     * @param options
+     */
+    pdf(options?: Electron.PrintToPDFOptions): Promise<Buffer>;
+    /**
+     * Take a screenshot of the current page and return the buffer of the PNG
+     * @param rect
+     * @param options
+     */
+    screenshot(rect?: Electron.Rectangle, options?: Electron.ToPNGOptions): Promise<Buffer>;
     /**
      * Returns true if the selector is within the page
      * @param selector

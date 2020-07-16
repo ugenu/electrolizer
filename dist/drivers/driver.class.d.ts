@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
 import { OperatorFunctions } from '../operator-functions.interface';
 import { Push } from '../evaluate-function.type';
@@ -6,6 +7,7 @@ import { Cookies } from './cookies.class';
 export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<void> {
     protected bus: T;
     cookies: Cookies;
+    private headers;
     constructor(bus: T);
     get busType(): ElectrolizerType;
     get webContents(): WebContents;
@@ -37,7 +39,12 @@ export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> 
     wait(ms: number): Promise<void>;
     wait(selector: string, msDelay?: number): Promise<void>;
     wait<T, K extends any[]>(fn: (...args: Push<K, T>) => boolean | Promise<boolean>, ...args: K): Promise<void>;
-    header(header: string, value: string): Promise<void>;
+    url(): Promise<string>;
+    path(): Promise<string>;
+    title(): Promise<string>;
+    pdf(options?: Electron.PrintToPDFOptions): Promise<Buffer>;
+    screenshot(rect?: Electron.Rectangle, options?: Electron.ToPNGOptions): Promise<Buffer>;
+    header(header?: string, value?: string): Promise<void>;
     useragent(useragent: string): Promise<void>;
     private loginEventListener;
     authentication(username: string, password: string): Promise<void>;

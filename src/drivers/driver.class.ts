@@ -11,6 +11,8 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
 
   cookies = new Cookies(this.webContents);
 
+  private headers: Record<string, string> = {};
+
   constructor(protected bus: T){}
 
  
@@ -70,7 +72,28 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
   
   async goto(url: string, headers?: Record<string, string>): Promise<void> {
     if(!url){ throw new Error('url must be defined'); }
-    await this.webContents.loadURL(url);
+
+    let extraHeaders: string = "";
+    let httpReferrer: string = "";
+
+    let usingHeaders: Record<string, string> = {
+      ...this.headers,
+      ...headers,
+    };
+
+    for(let header in usingHeaders){
+      if(header.toLowerCase() === 'referer'){
+        httpReferrer = usingHeaders[header];
+        continue;
+      }
+
+      extraHeaders += header + ': ' + usingHeaders[header] + "\n"
+    }
+
+    await this.webContents.loadURL(url, {
+      extraHeaders,
+      httpReferrer
+    });
   }
 
   
@@ -109,7 +132,26 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
   }
 
   async mousedown(selector: string): Promise<void> {
+    await this.evaluate_now((selector) => {
+      let element = document.querySelector(selector)
+      if (!element) {
+        throw new Error('Unable to find element by selector: ' + selector)
+      }
 
+      let bounding = element.getBoundingClientRect();
+
+      let event = new MouseEvent('mousedown', {
+        //@ts-ignore
+        view: document.window,
+        bubbles: true,
+        cancelable: true,
+        clientX: bounding.left + bounding.width / 2,
+        clientY: bounding.top + bounding.height / 2
+      });
+      
+      //@ts-ignore
+      element.dispatchEvent(event)
+    }, selector);
   }
 
   
@@ -120,17 +162,52 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
     }, selctor);
   }
 
-  
-  
   async mouseup(selector: string): Promise<void> {
+    await this.evaluate_now((selector) => {
+      let element = document.querySelector(selector)
+      if (!element) {
+        throw new Error('Unable to find element by selector: ' + selector)
+      }
 
+      let bounding = element.getBoundingClientRect();
+
+      let event = new MouseEvent('mouseup', {
+        //@ts-ignore
+        view: document.window,
+        bubbles: true,
+        cancelable: true,
+        clientX: bounding.left + bounding.width / 2,
+        clientY: bounding.top + bounding.height / 2
+      });
+      
+      //@ts-ignore
+      element.dispatchEvent(event)
+    }, selector);
   }
   
   async mouseover(selector: string): Promise<void> {
+    await this.evaluate_now((selector) => {
+      let element = document.querySelector(selector)
+      if (!element) {
+        throw new Error('Unable to find element by selector: ' + selector)
+      }
 
+      let bounding = element.getBoundingClientRect();
+
+      let event = new MouseEvent('mouseover', {
+        //@ts-ignore
+        view: document.window,
+        bubbles: true,
+        cancelable: true,
+        clientX: bounding.left + bounding.width / 2,
+        clientY: bounding.top + bounding.height / 2
+      });
+      
+      //@ts-ignore
+      element.dispatchEvent(event)
+    }, selector);
   }
 
-  
   async mouseout(selector: string): Promise<void> {
     await this.evaluate_now((selector) => {
       let element = document.querySelector(selector)
@@ -144,7 +221,6 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
     }, selector);
   }
 
-  
   async focus(selector: string): Promise<void> {
     return this.evaluate_now((selector) => {
       //@ts-ignore
@@ -152,7 +228,6 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
     }, selector);
   }
 
-  
   async blur(selector: string): Promise<void> {
     return this.evaluate_now((selector) => {
       //@ts-ignore
@@ -164,7 +239,6 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
     }, selector);
   }
 
-  
   async type(selector: string, text?: string): Promise<void> {
     let chars = String(text).split('');
 
@@ -363,9 +437,41 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
     await block();
   }
 
-  
-  async header(header: string, value: string): Promise<void> {
+  async url(): Promise<string> {
+    return this.webContents.getURL();
+  }
 
+  async path(): Promise<string> {
+    return await this.evaluate_now(() => document.location.pathname);
+  }
+
+  async title(): Promise<string> {
+    return await this.evaluate_now(() => document.title);
+  }
+
+  async pdf(options?: Electron.PrintToPDFOptions): Promise<Buffer> {
+    let opt: Electron.PrintToPDFOptions = {
+      marginsType: 0,
+      printBackground: true,
+      printSelectionOnly: false,
+      landscape: false,
+      ...options,
+    };
+
+    return await this.webContents.printToPDF(opt);
+  }
+
+  async screenshot(rect?: Electron.Rectangle, options?: Electron.ToPNGOptions): Promise<Buffer> {
+    let capture = await this.webContents.capturePage(rect);
+    return capture.toPNG(options);
+  }
+  
+  async header(header?: string, value?: string): Promise<void> {
+    if(typeof header === "string" && typeof value !== "undefined"){
+      this.headers[header] = value;
+    } else {
+      this.headers = {};
+    }
   }
 
   async useragent(useragent: string): Promise<void> {

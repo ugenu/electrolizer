@@ -13,11 +13,9 @@ export enum ElectrolizerType {
 
 export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<Electrolizer<T>> {
 
-  interactionReady: boolean = false;
+  private _queue: (() => Promise<any>)[] = [];
 
-  queue: (() => Promise<any>)[] = [];
-
-  driver!: WebviewTagDriver | BrowserWindowDriver | BrowserViewDriver;
+  private driver!: WebviewTagDriver | BrowserWindowDriver | BrowserViewDriver;
 
   constructor(protected bus: T){
     this.setupDriver();
@@ -25,7 +23,7 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
 
   cookies: Cookies<Electrolizer<T>> = {
     clearAll: () => { 
-      this._queue( () => this.driver.cookies.clearAll() );
+      this.queue( () => this.driver.cookies.clearAll() );
       return this;
     },
     get: (arg?: any) => {
@@ -33,11 +31,11 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
     },
     set: (name: string | Electron.Cookie, value?: string) => {
       //@ts-ignore
-      this._queue(() => this.driver.cookies.set(name, value));
+      this.queue(() => this.driver.cookies.set(name, value));
       return this;
     },
     clear: (name?: string) => {
-      this._queue(() => this.driver.cookies.clear(name));
+      this.queue(() => this.driver.cookies.clear(name));
       return this;
     },
   }
@@ -78,92 +76,102 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
     return ElectrolizerType.webview;
   }
   
-  private _queue(fn: () => Promise<any>){
-    this.queue.push(fn);
+  private queue(fn: () => Promise<any>){
+    this._queue.push(fn);
   }
 
   goto(url: string, headers?: Record<string, string>): Electrolizer<T> {
-    this._queue(this.driver.goto.bind(this.driver, url, headers));
+    this.queue(this.driver.goto.bind(this.driver, url, headers));
     return this;
   }
 
   back(): Electrolizer<T> {
-    this._queue(this.driver.back.bind(this.driver));
+    this.queue(this.driver.back.bind(this.driver));
     return this;
   }
 
   forward(): Electrolizer<T> {
-    this._queue(this.driver.forward.bind(this.driver));
+    this.queue(this.driver.forward.bind(this.driver));
     return this;
   }
 
   refresh(): Electrolizer<T> {
-    this._queue(this.driver.refresh.bind(this.driver));
+    this.queue(this.driver.refresh.bind(this.driver));
     return this;
   }
 
   click(selector: string): Electrolizer<T> {
-    this._queue(this.driver.click.bind(this.driver, selector));
+    this.queue(this.driver.click.bind(this.driver, selector));
     return this;
   }
 
   mousedown(selector: string): Electrolizer<T> {
-    this._queue(this.driver.mousedown.bind(this.driver, selector));
+    this.queue(this.driver.mousedown.bind(this.driver, selector));
     return this;
   }
 
   mouseup(selector: string): Electrolizer<T> {
-    this._queue(this.driver.mouseup.bind(this.driver, selector));
+    this.queue(this.driver.mouseup.bind(this.driver, selector));
     return this;
   }
 
   mouseover(selector: string): Electrolizer<T> {
-    this._queue(this.driver.mouseover.bind(this.driver, selector));
+    this.queue(this.driver.mouseover.bind(this.driver, selector));
     return this;
   }
 
   mouseout(selector: string): Electrolizer<T> {
-    this._queue(this.driver.mouseout.bind(this.driver, selector));
+    this.queue(this.driver.mouseout.bind(this.driver, selector));
+    return this;
+  }
+
+  focus(selector: string): Electrolizer<T> {
+    this.queue(this.driver.focus.bind(this.driver, selector));
+    return this;
+  }
+
+  blur(selector: string): Electrolizer<T> {
+    this.queue(this.driver.focus.bind(this.driver, selector));
     return this;
   }
 
   type(selector: string, text?: string): Electrolizer<T> {
-    this._queue(this.driver.type.bind(this.driver, selector, text));
+    this.queue(this.driver.type.bind(this.driver, selector, text));
     return this;
   }
 
   insert(selector: string, text?: string): Electrolizer<T> {
-    this._queue(this.driver.insert.bind(this.driver, selector, text));
+    this.queue(this.driver.insert.bind(this.driver, selector, text));
     return this;
   }
 
   check(selector: string): Electrolizer<T> {
-    this._queue(this.driver.check.bind(this.driver, selector));
+    this.queue(this.driver.check.bind(this.driver, selector));
     return this;
   }
 
   uncheck(selector: string): Electrolizer<T> {
-    this._queue(this.driver.uncheck.bind(this.driver, selector));
+    this.queue(this.driver.uncheck.bind(this.driver, selector));
     return this;
   }
 
   select(selector: string, option?: string): Electrolizer<T> {
-    this._queue(this.driver.select.bind(this.driver, selector, option));
+    this.queue(this.driver.select.bind(this.driver, selector, option));
     return this;
   }
 
   scrollTo(top: number, left: number): Electrolizer<T> {
-    this._queue(this.driver.scrollTo.bind(this.driver, top, left));
+    this.queue(this.driver.scrollTo.bind(this.driver, top, left));
     return this;
   }
 
   viewport(width: number, height: number): Electrolizer<T> {
-    this._queue(this.driver.viewport.bind(this.driver, width, height));
+    this.queue(this.driver.viewport.bind(this.driver, width, height));
     return this;
   }
 
   inject(type: 'js' | 'css', file: string): Electrolizer<T> {
-    this._queue(this.driver.inject.bind(this.driver, type, file));
+    this.queue(this.driver.inject.bind(this.driver, type, file));
     return this;
   }
 
@@ -182,35 +190,61 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
     return this.driver.evaluate(fn, ...args);
   }
 
+  async url(): Promise<string> {
+    await this.run();
+    return await this.driver.url();
+  }
+
+  async path(): Promise<string> {
+    await this.run();
+    return await this.driver.path();
+  }
+
+  async title(): Promise<string> {
+    await this.run();
+    return await this.driver.title();
+  }
+
+  async pdf(options?: Electron.PrintToPDFOptions): Promise<Buffer> {
+    await this.run();
+    return await this.driver.pdf(options);
+  }
+
+  async screenshot(rect: Electron.Rectangle, options: Electron.ToPNGOptions): Promise<Buffer> {
+    await this.run();
+    return await this.driver.screenshot(rect, options);
+  }
+
   wait(ms: number): Electrolizer<T>
   wait(selector: string, delay?: number): Electrolizer<T>
   wait<R, K extends any[]>(fn: (...args: Push<K, R>) => boolean | Promise<boolean> , ...args: K): Electrolizer<T>
   wait(): Electrolizer<T> {
     //@ts-ignore
-    this._queue(() => this.driver.wait.apply(this.driver, arguments));
+    this.queue(() => this.driver.wait.apply(this.driver, arguments));
     return this;
   }
 
-  header(header: string, value: string): Electrolizer<T> {
+  header(header?: string, value?: string): Electrolizer<T> {
+    this.queue(this.driver.header.bind(this.driver, header, value));
     return this;
   }
 
   authentication(username: string, password: string): Electrolizer<T> {
-    this._queue(this.driver.authentication.bind(this.driver, username, password));
+    this.queue(this.driver.authentication.bind(this.driver, username, password));
     return this;
   }
 
   useragent(useragent: string): Electrolizer<T> {
-    this._queue(this.driver.useragent.bind(this.driver, useragent));
+    this.queue(this.driver.useragent.bind(this.driver, useragent));
     return this;
   }
 
   async run(): Promise<void> {
-    for(let block of this.queue){
+    for(let block of this._queue){
       await block();
     }
 
-    this.queue = [];
+    this._queue = [];
   }
 
   async end(): Promise<void> {
