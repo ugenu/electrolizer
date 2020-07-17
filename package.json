@@ -22,6 +22,13 @@
     "email": "isses@ugenu.io",
     "url": "https://ugenu.io"
   },
+  "keywords": [
+    "electron",
+    "automate",
+    "webview",
+    "browserView",
+    "browserWindow"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.8.3",
