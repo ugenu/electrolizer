@@ -17,7 +17,11 @@
       "pre-commit": "npm run build && git add ."
     }
   },
-  "author": "@ugenu.io",
+  "author": {
+    "name": "ugenu.io",
+    "email": "isses@ugenu.io",
+    "url": "https://ugenu.io"
+  },
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.8.3",
@@ -53,5 +57,10 @@
   },
   "dependencies": {
     "handlebars": "^4.7.6"
+  },
+  "homepage": "https://github.com/ugenu/electrolizer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ugenu/electrolizer"
   }
 }
