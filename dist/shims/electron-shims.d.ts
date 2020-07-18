@@ -9,7 +9,7 @@ export declare namespace ElectronShims {
     interface BrowserWindowViewLike {
         webContents: WebContentsLike;
     }
-    interface WebviewTagLike extends WebContentsLike {
+    interface WebviewTagLike extends Electron.WebviewTag {
     }
     interface Cookie extends Electron.Cookie {
     }

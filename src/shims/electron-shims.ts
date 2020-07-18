@@ -15,7 +15,7 @@ export namespace ElectronShims {
     webContents: WebContentsLike
   }
 
-  export interface WebviewTagLike extends WebContentsLike {}
+  export interface WebviewTagLike extends Electron.WebviewTag {}
 
   export interface Cookie extends Electron.Cookie {}
 }
