@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { BrowserView, BrowserWindow, WebviewTag } from 'electron';
+import { ElectronShims } from './shims/electron-shims';
 import { OperatorFunctions } from './operator-functions.interface';
 import { Push } from './evaluate-function.type';
 import { Cookies } from './drivers/cookies.interface';
@@ -8,7 +8,7 @@ export declare enum ElectrolizerType {
     browserView = "browserView",
     browserWindow = "browserWindow"
 }
-export declare class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<Electrolizer<T>> {
+export declare class Electrolizer<T extends ElectronShims.WebviewTagLike | ElectronShims.BrowserWindowViewLike> implements OperatorFunctions<Electrolizer<T>> {
     protected bus: T;
     private _queue;
     private driver;

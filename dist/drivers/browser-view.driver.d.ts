@@ -1,4 +1,4 @@
 import { Driver } from "./driver.class";
-import { BrowserView } from "electron";
-export default class BrowserViewDriver extends Driver<BrowserView> {
+import { ElectronShims } from '../shims/electron-shims';
+export default class BrowserViewDriver extends Driver<ElectronShims.BrowserWindowViewLike> {
 }

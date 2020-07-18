@@ -1,8 +1,8 @@
-import { WebContents } from "electron";
+import { ElectronShims } from '../shims/electron-shims';
 import { Cookies as ICookies } from './cookies.interface';
 
 export class Cookies implements ICookies<Promise<void>> {
-  constructor(protected webContents: WebContents){}
+  constructor(protected webContents: ElectronShims.WebContentsLike){}
 
   async get(): Promise<Electron.Cookie[]>
   async get(name: string): Promise<Electron.Cookie[]>;
