@@ -59,7 +59,8 @@ export class Electrolizer<T extends ElectronShims.WebviewTagLike | ElectronShims
 
   
   get busType(): ElectrolizerType {
-    if(this.bus.hasOwnProperty('webContents')){
+    //@ts-ignore
+    if(this.bus.hasOwnProperty('webContents') || !!this.bus.webContents || typeof this.bus.webContents !== "undefined"){
       return ElectrolizerType.browserWindow;
     }
     return ElectrolizerType.webview;
