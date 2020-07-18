@@ -1,4 +1,4 @@
-import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
+import { ElectronShims } from './shims/electron-shims';
 import { OperatorFunctions } from './operator-functions.interface';
 import { WebviewTagDriver, BrowserViewDriver, BrowserWindowDriver } from './drivers';
 import { Push } from './evaluate-function.type';
@@ -11,7 +11,7 @@ export enum ElectrolizerType {
 }
 
 
-export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<Electrolizer<T>> {
+export class Electrolizer<T extends ElectronShims.WebviewTagLike | ElectronShims.BrowserWindowViewLike> implements OperatorFunctions<Electrolizer<T>> {
 
   private _queue: (() => Promise<any>)[] = [];
 
@@ -44,35 +44,24 @@ export class Electrolizer<T extends WebviewTag | BrowserView | BrowserWindow> im
   private setupDriver(){
     switch(this.busType){
       case ElectrolizerType.webview:
-        this.driver = new WebviewTagDriver(this.bus as WebviewTag);
+        this.driver = new WebviewTagDriver(this.bus as ElectronShims.WebviewTagLike, this.busType);
       break;
       
       case ElectrolizerType.browserWindow:
-        this.driver = new BrowserWindowDriver(this.bus as BrowserWindow);
+        this.driver = new BrowserWindowDriver(this.bus as ElectronShims.BrowserWindowViewLike, this.busType);
       break;
 
       case ElectrolizerType.browserView:
-        this.driver = new BrowserViewDriver(this.bus as BrowserView);
+        this.driver = new BrowserViewDriver(this.bus as ElectronShims.BrowserWindowViewLike, this.busType);
         break;
     }
   }
 
   
   get busType(): ElectrolizerType {
-    try {
-      let instanceOfTest = this.bus instanceof BrowserView;
-    } catch(error){
-      return ElectrolizerType.webview;
-    }
-
-    if(this.bus instanceof BrowserView){
-      return ElectrolizerType.browserView;
-    }
-
-    if(this.bus instanceof BrowserWindow){
+    if(this.bus.hasOwnProperty('webContents')){
       return ElectrolizerType.browserWindow;
     }
-
     return ElectrolizerType.webview;
   }
   

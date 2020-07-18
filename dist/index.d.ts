@@ -1,3 +1,3 @@
-import { BrowserWindow, BrowserView, WebviewTag } from 'electron';
+import { ElectronShims } from './shims/electron-shims';
 export { Electrolizer, Electrolizer as default } from './electrolizer.class';
-export declare type ElectrolizerBus = BrowserWindow | BrowserView | WebviewTag;
+export declare type ElectrolizerBus = ElectronShims.BrowserWindowViewLike | ElectronShims.WebviewTagLike;

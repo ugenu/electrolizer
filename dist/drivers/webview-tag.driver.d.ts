@@ -1,4 +1,4 @@
 import { Driver } from "./driver.class";
-import { WebviewTag } from "electron";
-export default class WebviewTagDriver extends Driver<WebviewTag> {
+import { ElectronShims } from '../shims/electron-shims';
+export default class WebviewTagDriver extends Driver<ElectronShims.WebviewTagLike> {
 }

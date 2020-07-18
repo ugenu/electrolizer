@@ -1,16 +1,16 @@
 /// <reference types="node" />
-import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
+import { ElectronShims } from '../shims/electron-shims';
 import { OperatorFunctions } from '../operator-functions.interface';
 import { Push } from '../evaluate-function.type';
 import { ElectrolizerType } from '../electrolizer.class';
 import { Cookies } from './cookies.class';
-export declare class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<void> {
+export declare class Driver<T extends ElectronShims.BrowserWindowViewLike | ElectronShims.WebviewTagLike> implements OperatorFunctions<void> {
     protected bus: T;
+    protected busType: ElectrolizerType;
     cookies: Cookies;
     private headers;
-    constructor(bus: T);
-    get busType(): ElectrolizerType;
-    get webContents(): WebContents;
+    constructor(bus: T, busType: ElectrolizerType);
+    get webContents(): ElectronShims.WebContentsLike;
     private _inject;
     private evaluate_now;
     goto(url: string, headers?: Record<string, string>): Promise<void>;

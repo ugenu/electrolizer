@@ -1,4 +1,4 @@
-import { BrowserView, BrowserWindow, WebviewTag, WebContents } from 'electron';
+import { ElectronShims } from '../shims/electron-shims';
 import { OperatorFunctions } from '../operator-functions.interface';
 import { Push } from '../evaluate-function.type';
 import { execute, inject } from '../javascript.template';
@@ -7,42 +7,22 @@ import { delay } from '../utils/delay.function';
 import { promises } from 'fs';
 import { Cookies } from './cookies.class';
 
-export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implements OperatorFunctions<void> {
+export class Driver<T extends ElectronShims.BrowserWindowViewLike | ElectronShims.WebviewTagLike> implements OperatorFunctions<void> {
 
   cookies = new Cookies(this.webContents);
 
   private headers: Record<string, string> = {};
 
-  constructor(protected bus: T){}
+  constructor(protected bus: T, protected busType: ElectrolizerType){}
 
- 
-  get busType(): ElectrolizerType {
-    try {
-      let instanceOfTest = this.bus instanceof BrowserView;
-    } catch(error){
-      return ElectrolizerType.webview;
-    }
-
-    if(this.bus instanceof BrowserView){
-      return ElectrolizerType.browserView;
-    }
-
-    if(this.bus instanceof BrowserWindow){
-      return ElectrolizerType.browserWindow;
-    }
-
-    return ElectrolizerType.webview;
-  }
-
-  
-  get webContents(): WebContents {
+  get webContents(): ElectronShims.WebContentsLike {
     switch(this.busType){
       case ElectrolizerType.webview:
         //@ts-ignore
-        return (this.bus as WebviewTag)
+        return (this.bus as ElectronShims.WebviewTagLike)
     }
 
-    return (this.bus as BrowserWindow).webContents;
+    return (this.bus as ElectronShims.BrowserWindowViewLike).webContents;
   }
 
   
@@ -347,9 +327,10 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
       case ElectrolizerType.webview:
         return;
       case ElectrolizerType.browserView:
-        let bvbux: BrowserView = this.bus as BrowserView;
+        let bvbux = this.bus as ElectronShims.BrowserWindowViewLike;
         //@ts-ignore
         let bounds = bvbux.getBounds() as Electron.Rectangle;
+        //@ts-ignore
         bvbux.setBounds({
           ...bounds,
           width,
@@ -357,7 +338,8 @@ export class Driver<T extends WebviewTag | BrowserView | BrowserWindow> implemen
         })
         return;
       case ElectrolizerType.browserWindow:
-        (this.bus as (BrowserWindow)).setSize(width, height);
+        //@ts-ignore
+        (this.bus as (ElectronShims.BrowserWindowViewLike)).setSize(width, height);
         return;
     }
   }
