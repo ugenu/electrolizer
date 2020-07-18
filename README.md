@@ -352,8 +352,10 @@ You handle 'em! Since you have control over the `bus`, you can hook onto any eve
 | webview           | [DOM-Events](https://www.electronjs.org/docs/api/webview-tag#dom-events)                   |
 
 ## Tests
-Electrolizer was tested with a BrowserWindow, and utilizing the same suite of tests that Nightmare does. 
+Electrolizer was developed using unit tests and a BrowserWindow, and utilizing the same suite of tests that Nightmare does. 
 ***Still a work in progress***
+
+Electrolizer has also been "tested" using a webview tag on an "almost" production ready project.
 
 ## Security
 The architecture of Electrolizer does not require any preload scripts or anything that jeopardizes the general security that [Electron uses by default](https://github.com/electron/electron/blob/master/docs/tutorial/security.md). Still, it is wise to follow best practices and your best judgement. Electron is a powerful tool in the hands of hackers, but not if we all work together!
