@@ -52,7 +52,7 @@
     "babel-polyfill": "^6.26.0",
     "basic-auth": "^2.0.1",
     "basic-auth-connect": "^1.0.0",
-    "electron": "^6.1.12",
+    "electron": "^15.5.5",
     "express": "^4.17.1",
     "husky": "^4.2.5",
     "jest": "^25.5.2",
